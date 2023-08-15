@@ -6,17 +6,17 @@ function App() {
   const [val, setval] = useState("");
   const [message, setMessage] = useState("");
   const [colorpicked, setColorPicked] = useState("");
-  const search = () => {
-    const ans = {};
-    Object.entries(data).forEach((color) => {
-      if (color[0].includes(val) || color[1].includes(val)) {
-        ans[color[0]] = color[1];
-      }
-    });
-    console.log(ans);
-    // setData({ ...ans });
-    // Object.entries(ans).length > 0 ? setData({ ...ans }) : setData({ ...clrs });
-  };
+  // const search = () => {
+  //   const ans = {};
+  //   Object.entries(data).forEach((color) => {
+  //     if (color[0].includes(val) || color[1].includes(val)) {
+  //       ans[color[0]] = color[1];
+  //     }
+  //   });
+  //   console.log(ans);
+  //   // setData({ ...ans });
+  //   // Object.entries(ans).length > 0 ? setData({ ...ans }) : setData({ ...clrs });
+  // };
   const copyColor = (val, name) => {
     navigator.clipboard.writeText(val);
     setColorPicked(val);
