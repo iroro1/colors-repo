@@ -14,8 +14,8 @@ function App() {
   //     }
   //   });
   //   console.log(ans);
-  //   // setData({ ...ans });
-  //   // Object.entries(ans).length > 0 ? setData({ ...ans }) : setData({ ...clrs });
+  // setData({ ...ans });
+  // Object.entries(ans).length > 0 ? setData({ ...ans }) : setData({ ...clrs });
   // };
   const copyColor = (val, name) => {
     navigator.clipboard.writeText(val);
