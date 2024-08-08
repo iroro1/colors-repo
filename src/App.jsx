@@ -56,33 +56,6 @@ const App = () => {
         fontFamily: "'Arial', sans-serif",
       }}
     >
-      {message && (
-        <div
-          style={{
-            padding: "10px",
-            background: colorPicked,
-            color: clrs.Alabaster,
-            position: "fixed",
-            left: "20px",
-            top: "20px",
-            borderRadius: "10px",
-            zIndex: 1000,
-            display: "flex",
-            alignItems: "center",
-            gap: "10px",
-          }}
-        >
-          <p style={{ margin: 0 }}>{message}</p>
-          <IconButton
-            style={{
-              cursor: "pointer",
-            }}
-            onClick={() => setMessage("")}
-          >
-            <CloseIcon />
-          </IconButton>
-        </div>
-      )}
       <header
         style={{
           marginBottom: "20px",
@@ -95,6 +68,33 @@ const App = () => {
           padding: "10px",
         }}
       >
+        {message && (
+          <div
+            style={{
+              padding: "10px",
+              background: "#007bff",
+              color: clrs.Alabaster,
+              position: "fixed",
+              left: "20px",
+              top: "20px",
+              borderRadius: "10px",
+              zIndex: 1001,
+              display: "flex",
+              alignItems: "center",
+              gap: "10px",
+            }}
+          >
+            <p style={{ margin: 0 }}>{message}</p>
+            <IconButton
+              style={{
+                cursor: "pointer",
+              }}
+              onClick={() => setMessage("")}
+            >
+              <CloseIcon sx={{ color: clrs.Alabaster }} />
+            </IconButton>
+          </div>
+        )}
         <h1
           style={{
             textAlign: "center",
