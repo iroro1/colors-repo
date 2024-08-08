@@ -1,129 +1,300 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { clrs } from "./colorObj";
+import chroma from "chroma-js";
+import { Button, Modal, Box, Typography, IconButton } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 
-function App() {
+const getRandomColor = () => chroma.random().hex();
+
+const generatePalette = () => {
+  let colors = [];
+  while (colors.length < 6) {
+    let color = getRandomColor();
+    if (!colors.includes(color)) colors.push(color);
+  }
+  return colors;
+};
+
+const App = () => {
   const [data, setData] = useState(clrs);
-  const [val, setval] = useState("");
+  const [val, setVal] = useState("");
   const [message, setMessage] = useState("");
-  const [colorpicked, setColorPicked] = useState("");
-  // const search = () => {
-  //   const ans = {};
-  //   Object.entries(data).forEach((color) => {
-  //     if (color[0].includes(val) || color[1].includes(val)) {
-  //       ans[color[0]] = color[1];
-  //     }
-  //   });
-  //   console.log(ans);
-  // setData({ ...ans });
-  // Object.entries(ans).length > 0 ? setData({ ...ans }) : setData({ ...clrs });
-  // };
-  const copyColor = (val, name) => {
-    navigator.clipboard.writeText(val);
-    setColorPicked(val);
-    setMessage(`Color code for ${name} (${val}) copied to clipboard`);
+  const [colorPicked, setColorPicked] = useState("");
+  const [palette, setPalette] = useState([]);
+  const [open, setOpen] = useState(false);
+
+  const search = () => {
+    const filteredColors = Object.entries(clrs).reduce((acc, [name, hex]) => {
+      if (name.toLowerCase().includes(val.toLowerCase()) || hex.includes(val)) {
+        acc[name] = hex;
+      }
+      return acc;
+    }, {});
+    setData(filteredColors);
   };
+
+  const copyColor = (hex, name) => {
+    navigator.clipboard.writeText(hex);
+    setColorPicked(hex);
+    setMessage(`Color code for ${name} (${hex}) copied to clipboard`);
+    setTimeout(() => setMessage(""), 3000);
+  };
+
+  const handleGeneratePalette = () => {
+    const newPalette = generatePalette();
+    setPalette(newPalette);
+    setOpen(true);
+  };
+
+  const handleClose = () => setOpen(false);
+
   return (
     <div
       style={{
         width: "100%",
+        padding: "20px",
+        fontFamily: "'Arial', sans-serif",
       }}
     >
       {message && (
         <div
           style={{
-            padding: 10,
-            background: colorpicked,
+            padding: "10px",
+            background: colorPicked,
             color: clrs.Alabaster,
             position: "fixed",
-            left: 20,
-            top: 20,
-            borderRadius: 10,
-            paddingRight: 50,
+            left: "20px",
+            top: "20px",
+            borderRadius: "10px",
+            zIndex: 1000,
+            display: "flex",
+            alignItems: "center",
+            gap: "10px",
           }}
-          className={`p-4 bg-[#ffff000] text-[#fff] m-2 relative`}
         >
-          <p
+          <p style={{ margin: 0 }}>{message}</p>
+          <IconButton
             style={{
-              outlineColor: "#333",
-              textShadow: "2px 2px 1px #333",
-            }}
-          >
-            {message}
-          </p>
-          <div
-            style={{
-              position: "absolute",
-              right: 10,
-              top: 10,
               cursor: "pointer",
-              outlineColor: "#333",
-              textShadow: "2px 2px 1px #333",
             }}
             onClick={() => setMessage("")}
           >
-            <span>X</span>
-          </div>
+            <CloseIcon />
+          </IconButton>
         </div>
       )}
-      <h1 style={{ color: clrs["American Rose"], textAlign: "center" }}>
-        Colors
-      </h1>
-      <div
+      <header
         style={{
+          marginBottom: "20px",
+          position: "fixed",
+          zIndex: 1000,
+          top: "0",
+          left: "0",
           width: "100%",
-          display: "flex",
-          justifyContent: "center",
-          margin: "20px 0",
+          background: "#fff",
+          padding: "10px",
         }}
       >
-        {/* <input
-          type="text"
-          onChange={(e) => {
-            setval(e.target.value);
-            search();
-          }}
+        <h1
           style={{
-            width: "320px",
-            padding: "9px",
-            border: "1px solid #ddd",
-            borderRadius: "7px",
+            textAlign: "center",
+            marginBottom: "20px",
+            color: "#007bff",
+            fontSize: "36px",
+            fontFamily: "'Arial', sans-serif",
+            textTransform: "uppercase",
+            letterSpacing: "2px",
+            fontWeight: "normal",
+            textShadow: "1px 1px 2px rgba(0, 0, 0, 0.3)",
           }}
-          placeholder="Search by Hex or Name . E.g (#000000 or Abbey)"
-        /> */}
-      </div>
+        >
+          Colors
+        </h1>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            margin: "20px 0",
+            gap: "10px",
+            width: "100%",
+            maxWidth: "500px",
+            margin: "0 auto",
+            position: "relative",
+            zIndex: 1000,
+            marginBottom: "20px",
+            padding: "0 10px",
+          }}
+        >
+          <input
+            type="text"
+            value={val}
+            onChange={(e) => {
+              setVal(e.target.value);
+              search();
+            }}
+            style={{
+              width: "100%",
+              padding: "10px",
+              border: "1px solid #ccc",
+              borderRadius: "5px",
+              fontSize: "16px",
+              outline: "none",
+              boxSizing: "border-box",
+              marginBottom: "10px",
+              fontFamily: "'Arial', sans-serif",
+              color: "#333",
+              backgroundColor: "#fff",
+              boxShadow: "0 0 5px rgba(0, 0, 0, 0.1)",
+              transition: "box-shadow 0.3s ease-in-out",
+            }}
+            placeholder="Search by Hex or Name (e.g., #000000 or Abbey)"
+          />
+        </div>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            margin: "20px 0",
+          }}
+        >
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleGeneratePalette}
+          >
+            Generate Palette
+          </Button>
+        </div>
+      </header>
+
       <div
         style={{
-          display: "flex",
-          flexWrap: "wrap",
-          gap: "15px",
-          padding: "10px 20px",
+          marginTop: "200px",
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(120px, 1fr))",
+          gap: "10px",
+          width: "100%",
+          maxWidth: "500px",
+          margin: "0 auto",
+          position: "relative",
+          zIndex: 999,
+          marginBottom: "20px",
+          padding: "0 10px",
+          overflow: "hidden",
+          borderRadius: "20px",
         }}
       >
-        {Object.entries(data).map((color) => (
+        {Object.entries(data).map(([name, hex]) => (
           <div
+            key={name}
             style={{
-              width: "100px",
-              overflow: "hidden",
-              borderTopLeftRadius: "20px",
-              borderTopRightRadius: "20px",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
               cursor: "pointer",
+              border: "1px solid #ccc",
+              borderRadius: "5px",
+              transition: "transform 0.3s ease-in-out",
+              boxShadow: "0 0 5px rgba(0, 0, 0, 0.1)",
             }}
+            onClick={() => copyColor(hex, name)}
           >
             <div
-              onClick={() => copyColor(color[1], color[0])}
               style={{
-                height: "50px",
                 width: "100%",
-                background: color[1],
-                lineHeight: "3px",
+                height: "100px",
+                borderRadius: "5px",
+                backgroundColor: hex,
+                boxShadow: "0 0 5px rgba(0, 0, 0, 0.1)",
+                transition: "box-shadow 0.3s ease-in-out",
+                marginBottom: "10px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                overflow: "hidden",
+                position: "relative",
+                cursor: "pointer",
               }}
             ></div>
-            <h5 style={{ fontSize: 12 }}>{color[0]}</h5>
+            <h5
+              style={{
+                margin: 0,
+                fontWeight: "normal",
+                textAlign: "center",
+                color: "#333",
+                fontFamily: "'Arial', sans-serif",
+                textShadow: "1px 1px 2px rgba(0, 0, 0, 0.3)",
+                transition: "color 0.3s ease-in-out",
+                cursor: "pointer",
+                width: "100%",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+                maxWidth: "100px",
+                textTransform: "capitalize",
+                marginBottom: "5px",
+              }}
+            >
+              {name}
+            </h5>
           </div>
         ))}
       </div>
+      <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="palette-modal-title"
+        aria-describedby="palette-modal-description"
+      >
+        <Box
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 400,
+            backgroundColor: "white",
+            border: "2px solid #000",
+            boxShadow: 24,
+            padding: "16px",
+            borderRadius: "8px",
+          }}
+        >
+          <Typography id="palette-modal-title" variant="h6" component="h2">
+            Generated Palette
+          </Typography>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-around",
+              marginTop: "16px",
+            }}
+          >
+            {palette.map((color, index) => (
+              <div key={index}>
+                <div
+                  style={{
+                    height: "50px",
+                    width: "50px",
+                    backgroundColor: color,
+                    marginBottom: "8px",
+                    borderRadius: "4px",
+                  }}
+                ></div>
+                <Typography
+                  variant="body2"
+                  style={{ textAlign: "center", wordWrap: "break-word" }}
+                >
+                  {color}
+                </Typography>
+              </div>
+            ))}
+          </div>
+        </Box>
+      </Modal>
     </div>
   );
-}
+};
 
 export default App;
